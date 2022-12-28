@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -42,11 +44,20 @@ class _MyAppState extends State<MyApp> {
     await _rmsPowerPlugin.startRecorder();
     debugPrint("Recorder started...");
     _rmsPowerPlugin.onRecorderStateChanged.listen((event) {
+      double convertedData;
       debugPrint("frequency: $event");
-      double convertedData = (event + 55) / 25;
-      if (convertedData <= 0) {
-        convertedData = 0;
+      if(Platform.isAndroid) {
+        convertedData = (event + 55) / 25;
+        if (convertedData <= 0) {
+          convertedData = 0;
+        }
+      } else {
+        convertedData = (event + 20) / 20;
+        if (convertedData <= 0) {
+          convertedData = 0;
+        }
       }
+
       setState(() {
         percentage = convertedData;
       });
